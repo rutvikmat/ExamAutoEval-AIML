@@ -17,4 +17,4 @@ logs/
 
 # NLTK data (if not tracked separately)
 # If you choose NOT to include the large data files:
-# nltk_data/
+# nltk_data/ 
