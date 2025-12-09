@@ -20,3 +20,107 @@ python manage.py migrate
 Create Superuser: (Access the Admin interface to define Key Answers)Bashpython manage.py createsuperuser
 Run the Server:Bashpython manage.py runserver
 Access the application at http://127.0.0.1:8000/.📚 Academic Validation (V. Experimental Analysis)The project requires validation against human grading:Define Keys: Add your sample questions and key answers via the Django Admin.Run Tests: Upload 10-15 sample handwritten sheets and record the "System Mark."Validate: Compare the System Mark against a manually assigned "Faculty Mark" to calculate the system's Accuracy Percentage. This result forms the core evidence of the system's effectiveness.💡 Future EnhancementsIntegration of the fully trained VGG-19 with GRU CRNN model for state-of-the-art HWR accuracy.Extension of the NLP pipeline to evaluate handwritten mathematical formulas and diagrams9.Implementation of background processing for high-volume batch grading.
+
+🚀 Project Running Guide
+1. Prerequisites Check
+Before starting the server, ensure you have the following essential software and data installed:
+
+Python 3.8+ and Git are installed.
+
+Tesseract OCR Engine is installed on your operating system (required for the HWR placeholder).
+
+Your project folder (ExamAutoEval/) contains the db.sqlite3 file (after running initial migrations) and the requirements.txt file.
+
+The nltk_data directory is present in the project root, containing all required NLTK/SpaCy resources (punkt, stopwords, en_core_web_sm).
+
+2. Environment Setup
+If you have already created your virtual environment (venv), you can skip to Step 2.3.
+
+2.1 Navigate to Project Directory
+Open your terminal or command prompt and go to the ExamAutoEval directory.
+
+Bash
+
+cd ExamAutoEval
+2.2 Activate Virtual Environment
+You must work within your isolated Python environment.
+
+Bash
+
+# macOS/Linux
+source venv/bin/activate
+# Windows
+venv\Scripts\activate
+2.3 Install Dependencies
+Install all required libraries, including Django, NLP tools (SpaCy, NLTK), and OCR integration.
+
+Bash
+
+pip install -r requirements.txt
+2.4 Verify NLTK/SpaCy Data Paths
+Even if you think you installed them, run this quick check to ensure the Python environment knows where the data files are:
+
+Bash
+
+python
+import nltk
+import spacy
+print("NLTK Data Paths:", nltk.data.path)
+# It should show your project's nltk_data folder path.
+exit()
+3. Database and Initialization
+If you have already run migrations and created a superuser, you can skip to Step 4.
+
+3.1 Run Database Migrations
+This ensures the database schema for KeyAnswer and Submission models is up to date.
+
+Bash
+
+python manage.py makemigrations evaluator
+python manage.py migrate
+3.2 Create Superuser (Admin Access)
+You need this to access the admin interface to define master answers and keywords.
+
+Bash
+
+python manage.py createsuperuser
+4. Running the Project
+4.1 Start the Server
+Launch the Django development server.
+
+Bash
+
+python manage.py runserver
+You should see output indicating the server is running, typically at: http://127.0.0.1:8000/
+
+5. Step-by-Step Testing Flow
+Follow these steps to test the full system functionality (Faculty and Student roles):
+
+Step 5.1: Define Key Answer (Faculty Prep)
+Go to the Admin site: http://127.0.0.1:8000/admin/
+
+Log in using your superuser credentials.
+
+Click Key Answers under the EVALUATOR section.
+
+Click + Add and enter a sample question (e.g., "Explain the role of the CPU."), the master answer, and comma-separated Keywords.
+
+Step 5.2: Run Evaluation (Faculty Workflow)
+Go to the main application: http://127.0.0.1:8000/
+
+Click Faculty Portal or navigate to /faculty/upload/.
+
+Fill in the Student Name, select the question you defined, and upload a handwritten image (e.g., sha_answer.jpg).
+
+Click "Run Full Evaluation".
+
+Verification: The resulting Faculty Detailed Report page will display the final score, the detailed metrics breakdown (Semantic, Grammar, Order), the text extracted by the AI, and the interactive Canvas visualization of the HWR process.
+
+Step 5.3: Check Results (Student Workflow)
+Go to the main application: http://127.0.0.1:8000/
+
+Click Check Results or navigate to /student/check/.
+
+Enter the Student Name and Question used in Step 5.2.
+
+Verification: The resulting Student Report page will display only the final score, the personalized feedback, and the student's submitted image/extracted text.
