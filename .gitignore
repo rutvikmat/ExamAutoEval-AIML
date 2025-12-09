@@ -1,0 +1,20 @@
+# Virtual Environment
+venv/
+*.pyc
+
+# Django/Python specific
+__pycache__/
+db.sqlite3
+.DS_Store
+
+# Media and Logs (Student Uploads, etc.)
+media/
+logs/
+
+# IDE files (optional)
+.idea/
+*.sublime-workspace
+
+# NLTK data (if not tracked separately)
+# If you choose NOT to include the large data files:
+# nltk_data/

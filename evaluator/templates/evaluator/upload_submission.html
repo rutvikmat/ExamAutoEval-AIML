@@ -1,0 +1,48 @@
+<!-- evaluator/templates/evaluator/upload_submission.html (Updated UI/UX) -->
+{% extends "base.html" %}
+{% block title %}Upload Submission{% endblock %}
+{% block content %}
+    <h1 class="mb-5 text-dark fw-bold">Upload Answer Sheet for Evaluation</h1>
+    <div class="card shadow-lg card-shadow border-primary border-3">
+        <div class="card-header bg-primary text-white fw-bold fs-5">
+            <i class="fas fa-file-upload me-2"></i> New Submission
+        </div>
+        <div class="card-body p-4 p-md-5">
+            {% if error %}<div class="alert alert-danger rounded-3">{{ error }}</div>{% endif %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row g-4">
+                    
+                    <div class="col-md-6">
+                        <label for="student_name" class="form-label fw-bold text-dark">Student Name:</label>
+                        <input type="text" id="student_name" name="student_name" class="form-control form-control-lg rounded-3" placeholder="e.g., Alice Johnson" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="question_id" class="form-label fw-bold text-dark">Select Question to Grade:</label>
+                        <select id="question_id" name="question_id" class="form-select form-select-lg rounded-3" required>
+                            <option value="" disabled selected>--- Select Question ---</option>
+                            {% for key in key_answers %}
+                                <option value="{{ key.id }}">{{ key.question_text }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label for="answer_sheet" class="form-label fw-bold text-dark">
+                        Upload Handwritten Answer Image (PNG/JPG):
+                    </label>
+                    <input type="file" id="answer_sheet" name="answer_sheet" accept="image/*" class="form-control form-control-lg rounded-3 p-3" required>
+                    <small class="form-text text-muted">The quality of the image directly affects HWR accuracy.</small>
+                </div>
+                
+                <div class="mt-5">
+                    <button type="submit" class="btn btn-primary btn-lg w-100 shadow-lg">
+                        <i class="fas fa-flask me-2"></i> Run Full Evaluation
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

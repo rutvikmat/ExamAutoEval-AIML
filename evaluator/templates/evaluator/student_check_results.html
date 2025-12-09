@@ -1,0 +1,57 @@
+<!-- evaluator/templates/evaluator/student_check_results.html (Updated UI/UX) -->
+{% extends "base.html" %}
+{% block title %}Check Results{% endblock %}
+{% block content %}
+    <h1 class="mb-5 text-dark fw-bold">Check Your Evaluation Results</h1>
+    
+    <div class="card shadow-lg card-shadow border-success border-3">
+        <div class="card-header bg-success text-white fw-bold fs-5">
+            <i class="fas fa-search me-2"></i> Find My Submission
+        </div>
+        <div class="card-body p-4 p-md-5">
+            <form method="post" class="mb-4">
+                {% csrf_token %}
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label for="student_name" class="form-label fw-bold text-dark">Enter Your Full Name:</label>
+                        <input type="text" id="student_name" name="student_name" class="form-control form-control-lg rounded-3" placeholder="e.g., John Smith" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="question_id" class="form-label fw-bold text-dark">Select Question Submitted:</label>
+                        <select id="question_id" name="question_id" class="form-select form-select-lg rounded-3" required>
+                            <option value="" disabled selected>--- Select Question ---</option>
+                            {% for key in key_answers %}
+                                <option value="{{ key.id }}">{{ key.question_text }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success btn-lg w-100 shadow-lg">
+                        <i class="fas fa-binoculars me-2"></i> Search Results
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if submissions %}
+        <div class="mt-5">
+            <h5 class="fw-bold text-dark mb-3">Found {{ submissions.count }} Submission{% if submissions.count != 1 %}s{% endif %}:</h5>
+            <ul class="list-group shadow-sm rounded-3">
+                {% for submission in submissions %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-3 list-group-item-action card-shadow">
+                        <div>
+                            <span class="fw-medium text-dark">{{ submission.related_question.question_text }}</span> 
+                            <small class="text-muted ms-3">(Submission ID: {{ submission.id }})</small>
+                        </div>
+                        <a href="{% url 'student_report_view' submission.id %}" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                            View Detailed Report <i class="fas fa-chevron-right ms-1"></i>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endblock %}

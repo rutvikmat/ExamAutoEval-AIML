@@ -1,0 +1,157 @@
+<!-- evaluator/templates/evaluator/view_results.html (Faculty View - FULLY UPDATED) -->
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Detailed Faculty Report{% endblock %}
+{% block content %}
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="display-6 fw-bold text-dark">Detailed Evaluation Report</h1>
+        <p class="text-muted lead">Analysis for Student: <strong class="text-primary">{{ submission.student_name }}</strong></p>
+    </header>
+
+    <div class="row g-5">
+        
+        <!-- Score and Metrics Column (Now starts first for mobile responsiveness) -->
+        <div class="col-lg-5 col-md-12 order-lg-2">
+            <div class="card shadow-lg card-shadow h-100 border-0">
+                <div class="card-body p-4">
+
+                    <!-- Score Header & Summary -->
+                    <div class="text-center mb-4">
+                        <div class="d-inline-block p-4 rounded-circle bg-success-subtle border border-success">
+                            <h2 class="display-3 text-success fw-bolder mb-0">
+                                {{ submission.score|floatformat:1 }}
+                            </h2>
+                        </div>
+                        <p class="fs-5 text-dark mt-2">OUT OF {{ key_answer.max_marks }} MARKS</p>
+                        <span class="badge bg-primary-subtle text-primary fw-bold p-2"><i class="fas fa-microchip me-1"></i> Weighted Model Evaluation</span>
+                    </div>
+
+                    <p class="text-center text-muted mb-4">
+                        Question: <strong>{{ key_answer.question_text }}</strong>
+                    </p>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- Evaluation Metrics Breakdown -->
+                    <h4 class="mb-3 fw-bold text-dark"><i class="fas fa-chart-bar me-2 text-primary"></i> Metrics Breakdown</h4>
+                    <ul class="list-group list-group-flush border rounded-3 small mb-4">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-medium">Semantic Similarity (Conceptual)</span>
+                            <span class="badge bg-primary rounded-pill">{{ metrics.semantic_similarity|floatformat:2 }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-medium">Keyword Match Score</span>
+                            <span class="badge bg-success rounded-pill">{{ metrics.keyword_match|floatformat:2 }} ({{ metrics.matched_keywords_list|length }} matched)</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-medium">Grammar Accuracy</span>
+                            <span class="badge bg-info text-dark rounded-pill">{{ metrics.grammar_accuracy|floatformat:2 }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-medium">Keyword Order Accuracy</span>
+                            <span class="badge bg-warning text-dark rounded-pill">{{ metrics.keyword_order_accuracy|floatformat:2 }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-medium">Lexical Match (Structural)</span>
+                            <span class="badge bg-secondary rounded-pill">{{ metrics.lexical_match|floatformat:2 }}</span>
+                        </li>
+                    </ul>
+
+                    <!-- Feedback -->
+                    <h4 class="mb-3 fw-bold text-dark"><i class="fas fa-comments me-2 text-info"></i> Personalized Feedback</h4>
+                    <div class="alert alert-info border-info-subtle p-3 rounded-3 small">
+                        {{ submission.feedback|linebreaks }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visualization Column -->
+        <div class="col-lg-7 col-md-12 order-lg-1">
+            <div class="card shadow-lg card-shadow h-100 border-0">
+                <div class="card-header bg-dark text-white fw-bold"><i class="fas fa-eye me-2"></i> Handwriting Recognition (HWR) Analysis</div>
+                <div class="card-body p-0 text-center" style="max-height: 600px; overflow: auto;">
+                    <canvas id="hwrCanvas" class="img-fluid" style="display: block; width: 100%;"></canvas>
+                </div>
+            </div>
+            <div class="mt-4">
+                <h5 class="fw-bold text-dark mb-2"><i class="fas fa-laptop-code me-1 text-secondary"></i> Digital Output (Raw Text)</h5>
+                <pre class="alert alert-secondary p-3 rounded-3 small border-secondary-subtle">
+                    {{ submission.extracted_text|linebreaks }}
+                </pre>
+            </div>
+        </div>
+        
+    </div>
+    
+    <div class="mt-5 text-center">
+        <a href="{% url 'faculty_dashboard' %}" class="btn btn-secondary btn-lg shadow-sm">
+            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('hwrCanvas');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        // Ensure image_url is safe and correctly passed
+        const imageUrl = "{{ image_url }}";
+        const extractedText = `{{ submission.extracted_text|escapejs }}`.split('\n');
+        
+        img.src = imageUrl;
+
+        img.onload = function() {
+            // Define max width for display purposes to ensure it fits well on screen
+            // The card body controls the max size, so use its container width
+            const containerWidth = canvas.closest('.card-body').clientWidth;
+            const maxWidth = containerWidth; 
+            const ratio = Math.min(maxWidth / img.width, 1);
+
+            canvas.width = img.width * ratio;
+            canvas.height = img.height * ratio;
+            
+            // Draw the original image 
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // SIMULATION OF RECOGNITION BOXES
+            // These coordinates are highly simplified and depend on the image size
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0.7)'; // Red box outline
+            ctx.lineWidth = 2 * ratio;
+            ctx.fillStyle = 'rgba(255, 255, 0, 0.4)'; // Yellow highlight
+
+            let y_offset = 30 * ratio; 
+            const line_height = 40 * ratio;
+
+            extractedText.forEach((line) => {
+                if (line.trim().length > 0) {
+                    const boxX = 10 * ratio;
+                    const boxY = y_offset - line_height * 0.75 + (5 * ratio); 
+                    const boxWidth = canvas.width - (20 * ratio);
+                    
+                    // Draw simulated yellow highlight box
+                    ctx.fillRect(boxX, boxY, boxWidth, line_height - (10 * ratio));
+                    
+                    // Draw red outline
+                    ctx.strokeRect(boxX, boxY, boxWidth, line_height - (10 * ratio));
+                }
+                y_offset += line_height;
+            });
+            
+            // Re-draw the image with reduced opacity to merge original text and highlights
+            ctx.globalAlpha = 0.4;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            ctx.globalAlpha = 1.0;
+        };
+
+        img.onerror = function() {
+            ctx.font = '20px Arial';
+            ctx.fillStyle = 'red';
+            ctx.fillText('Error loading image. Check MEDIA_ROOT settings.', 50, 50);
+        };
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,95 @@
+<!-- evaluator/templates/evaluator/home.html (Updated UI/UX) -->
+{% extends "base.html" %}
+{% block title %}Welcome to AI Scorer Pro{% endblock %}
+{% block content %}
+    <div class="row text-center mt-4">
+        <div class="col-12">
+            <h1 class="display-3 fw-bolder text-dark">AI-Powered Subjective Evaluation</h1>
+            <p class="lead text-muted">
+                Revolutionizing exam grading by reducing human bias, saving time, and providing actionable feedback.
+            </p>
+        </div>
+    </div>
+
+    <!-- Core Features Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4 text-primary fw-bold">Core Technology & Features</h2>
+            <div class="row g-4 justify-content-center">
+                
+                <!-- Feature 1: Handwriting Recognition (HWR) -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="card card-shadow h-100 border-primary border-3">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-pen-nib text-primary fs-1 mb-3"></i>
+                            <h5 class="card-title fw-bold text-primary">1. HWR Text Extraction</h5>
+                            <p class="card-text small text-muted">
+                                Converts handwritten student answers into standardized digital text using advanced Computer Vision models for scoring.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Feature 2: Semantic Similarity (NLP) -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="card card-shadow h-100 border-success border-3">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-sitemap text-success fs-1 mb-3"></i>
+                            <h5 class="card-title fw-bold text-success">2. Conceptual Matching (NLP)</h5>
+                            <p class="card-text small text-muted">
+                                Utilizes **TF-IDF Vectorization** and **Cosine Similarity** to grade based on the *meaning* and *concept* of the answer.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Feature 3: Multi-Criteria Weighted Scoring -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="card card-shadow h-100 border-info border-3">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-balance-scale-right text-info fs-1 mb-3"></i>
+                            <h5 class="card-title fw-bold text-info">3. Weighted Scoring Engine</h5>
+                            <p class="card-text small text-muted">
+                                Combines Keyword Presence, Semantic Match, Grammar Score, and Keyword Order for a holistic and customizable final grade.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Core Features Section -->
+
+    <hr class="my-5">
+
+    <!-- Role Selection Cards -->
+    <h2 class="text-center mb-5 text-dark fw-bold">Select Your Dedicated Portal</h2>
+    <div class="row justify-content-center g-4">
+        <!-- Faculty Card -->
+        <div class="col-lg-5 col-md-6">
+            <div class="card shadow-lg border-dark card-shadow h-100 bg-white">
+                <div class="card-body p-5 text-center">
+                    <i class="fas fa-chalkboard-teacher text-dark fs-2 mb-3"></i>
+                    <h5 class="card-title fs-3 fw-bold mb-3 text-dark">Faculty Portal</h5>
+                    <p class="card-text text-muted mb-4">Manage answer keys, upload submissions in bulk, and review detailed, quantitative evaluation reports.</p>
+                    <a href="{% url 'faculty_dashboard' %}" class="btn btn-primary btn-lg w-100">
+                        Access Faculty Tools <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- Student Card -->
+        <div class="col-lg-5 col-md-6">
+            <div class="card shadow-lg border-success card-shadow h-100 bg-white">
+                <div class="card-body p-5 text-center">
+                    <i class="fas fa-user-graduate text-success fs-2 mb-3"></i>
+                    <h5 class="card-title fs-3 fw-bold mb-3 text-success">Student Results</h5>
+                    <p class="card-text text-muted mb-4">Check your final mark, retrieve your personal evaluation report, and view actionable feedback.</p>
+                    <a href="{% url 'student_check_results' %}" class="btn btn-success btn-lg w-100">
+                        Check My Score <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
